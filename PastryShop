@@ -1,0 +1,163 @@
+#include<iostream>
+#include <string>
+using namespace std;
+
+
+class Pastry{
+    protected:
+    string name;
+    string ingredients;
+    double productionRate;
+    double taxRate;
+    
+    public:
+    Pastry(){
+        name="";
+        ingredients="";
+        productionRate=0.0;
+        taxRate=0.0;
+    }
+
+    Pastry(string n, string ing, double pR, double tR){
+        name=n;
+        ingredients=ing;
+        productionRate=pR;
+        taxRate=tR;
+    }
+
+    virtual ~Pastry(){}
+
+    virtual void display()const =0;
+    virtual double calcTotalCost() const=0;
+    virtual double calcRetailCost()const=0;
+    virtual double calcProfit() const=0;
+
+    friend class PastryReport;
+    friend void pastryCalc(const Pastry &p);
+};
+
+class SweetPastry: public Pastry
+{
+    public:
+    SweetPastry(string n, string i, double pr):Pastry(n,i,pr,0.08){}
+
+    void display() const override{
+     cout<<"Sweet Pastry: "<<name<<"\n""\nIngredients: "<<ingredients<<"\nProduction Rate: "<<productionRate<<"\nTax Rate: "<<taxRate<<endl;
+    }
+
+    double calcTotalCost() const override{
+        double markup=0.1*productionRate;
+        double sales=taxRate*productionRate;
+        double gst=0.06*productionRate;
+        
+        return productionRate+markup+gst+sales;
+    }
+
+    double calcRetailCost()const override{
+        double totalCost=calcTotalCost();
+        double prof=totalCost*0.3/0.7;
+        return totalCost+prof;
+    }
+
+    virtual double calcProfit() const override{
+        return calcRetailCost()-calcTotalCost();
+    }
+};
+
+class SavouryPastry: public Pastry{
+    public:
+    SavouryPastry(string n, string i, double pr):Pastry(n,i,pr,0.05){}
+
+    void display() const override{
+     cout<<"Savoury Pastry: "<<name<<"\n""\nIngredients: "<<ingredients<<"\nProduction Rate: "<<productionRate<<"\nTax Rate: "<<taxRate<<endl;
+    }
+
+    double calcTotalCost() const override{
+        double markup=0.1*productionRate;
+        double sales=taxRate*productionRate;
+        double gst=0.06*productionRate;
+        
+        return productionRate+markup+gst+sales;
+    }
+
+    double calcRetailCost()const override{
+        double totalCost=calcTotalCost();
+        double prof=totalCost*0.3/0.7;
+        return totalCost+prof;
+    }
+
+    virtual double calcProfit() const override{
+        return calcRetailCost()-calcTotalCost();
+    }
+};
+
+void pastryCalc(const Pastry &p){
+    cout<<"Calculating the total cost for "<<p.name<<"\n";
+    cout<<"Total Price: "<<p.calcTotalCost();
+    cout<<"\nProfit: "<<p.calcProfit();
+    cout<<"\nRetail Price: "<<p.calcRetailCost();
+}
+
+class PastryReport{
+    public:
+    void generateReport(Pastry * p[], int count){
+        double totalSale=0.0;
+        double totalProf=0.0;
+
+        for (int i=0; i<count; i++){
+            totalSale+=p[i]->calcTotalCost();
+            totalProf+=p[i]->calcProfit();
+        }
+
+        cout<<"The Total Sales: "<<totalSale;
+        cout<<"The Total Profit: "<<totalProf;
+    }
+};
+
+class pastryShop{
+    private:
+    Pastry* pastry[100];
+    int pastryCount;
+
+    public:
+    pastryShop(){
+        pastryCount=0;
+    }
+
+    pastryShop(int pc){
+        pastryCount=pc;
+    }
+
+    void addPastry(Pastry *p){
+        if (pastryCount<100){
+            pastry[pastryCount]=p;
+            pastryCount++;
+        }
+    }
+
+    void showDetails(){
+        for (int i=0; i<pastryCount; i++){
+            pastry[i]->display();
+            pastryCalc(*pastry[i]);
+        }
+    }
+
+    void generateShopReport(){
+        PastryReport report;
+        report.generateReport(pastry, pastryCount);
+    }
+};
+
+int main(){
+    pastryShop ps;
+
+    ps.addPastry(new SavouryPastry("Cheese pie", "Cheddar cheese" , 30));
+    ps.addPastry(new SweetPastry("Dark Chocolate", "Coca Powder, cream , milk, dark chocolate" , 50));
+    ps.addPastry(new SweetPastry("Belgian Chocolate", "Coca Powder, cream , milk" , 50));
+
+    ps.showDetails();
+    ps.generateShopReport();
+
+    return 0;
+}
+
