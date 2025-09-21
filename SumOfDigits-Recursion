@@ -1,0 +1,31 @@
+//Write a C++ program using nested recursion to calculate the sum of digits of a number until
+// a single digit is obtained.
+// Example:
+// Lab Manual 05
+// Input: 9875
+// Step 1: 9 + 8 + 7 + 5 = 29
+// Step 2: 2 + 9 = 11
+// Step 3: 1 + 1 = 2
+// Output: 2
+// Implement a recursive function sumDigits(int n) that finds the sum of digits of a number. Implement another recursive function nestedSum(int n) that keeps calling sumDigits until
+// a single digit is returned. Accept an integer input from the user and print the final single-digit result.
+#include <iostream>
+using namespace std;
+int sumDigits(int n) {
+ if (n == 0)
+ return 0;
+ return (n % 10) + sumDigits(n / 10);
+}
+int nestedSum(int n) {
+ if (n < 10)
+ return n;
+ return nestedSum(sumDigits(n));
+}
+int main() {
+ int num;
+cout << "Enter an integer: ";
+ cin >> num;
+ int result = nestedSum(num);
+ cout << "Output: " << result << endl;
+ return 0;
+}
