@@ -1,0 +1,95 @@
+#include <iostream>
+using namespace std;
+
+// ---------------- Node Class ----------------
+class Node {
+public:
+    string location;
+    double demand;
+    double distance;
+    double ratio;
+    Node* next;
+
+    Node(string loc, double d, double dist) {
+        location = loc;
+        demand = d;
+        distance = dist;
+        ratio = d / dist;   // demand-to-distance ratio
+        next = nullptr;
+    }
+};
+
+// ---------------- Circular Linked List Class ----------------
+class CircularList {
+private:
+    Node* head;
+
+public:
+    CircularList() {
+        head = nullptr;
+    }
+
+    // Insert node sorted by ratio (descending order)
+    void insert(string loc, double demand, double distance) {
+        Node* newNode = new Node(loc, demand, distance);
+
+        if (head == nullptr) { // empty list
+            head = newNode;
+            head->next = head; // circular link
+            return;
+        }
+
+        // If new node should be before head (higher ratio than head)
+        if (newNode->ratio > head->ratio) {
+            Node* temp = head;
+            while (temp->next != head) {
+                temp = temp->next;
+            }
+            temp->next = newNode;
+            newNode->next = head;
+            head = newNode;
+        }
+        else {
+            // Insert in sorted position
+            Node* current = head;
+            while (current->next != head && current->next->ratio >= newNode->ratio) {
+                current = current->next;
+            }
+            newNode->next = current->next;
+            current->next = newNode;
+        }
+    }
+
+    // Display the circular route once
+    void display() {
+        if (head == nullptr) {
+            cout << "No locations in the route.\n";
+            return;
+        }
+
+        Node* temp = head;
+        do {
+            cout << "Location: " << temp->location
+                 << " | Demand: " << temp->demand
+                 << " | Distance: " << temp->distance
+                 << " | Ratio: " << temp->ratio << endl;
+            temp = temp->next;
+        } while (temp != head);
+    }
+};
+
+// ---------------- Main ----------------
+int main() {
+    CircularList route;
+
+    // Insert locations (demand, distance)
+    route.insert("Station A", 50, 10);  // ratio = 5
+    route.insert("Station B", 30, 15);  // ratio = 2
+    route.insert("Station C", 60, 20);  // ratio = 3
+    route.insert("Station D", 40, 5);   // ratio = 8
+
+    cout << "Truck Route (based on demand-to-distance ratio):\n";
+    route.display();
+
+    return 0;
+}
