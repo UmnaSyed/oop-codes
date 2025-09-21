@@ -1,0 +1,88 @@
+#include <iostream>
+using namespace std;
+
+
+class Stack {
+private:
+    string* arr;     // dynamic array for stack items
+    int capacity;    // capacity of array
+    int top;         // index of top element
+
+    // Recursive reverse helper (pure array swapping)
+    void reverseRecursive(int low, int high) {
+        if (low >= high) return;  // base case
+
+        // swap first and last
+        string temp = arr[low];
+        arr[low] = arr[high];
+        arr[high] = temp;
+
+        // recursive call moving inward
+        reverseRecursive(low + 1, high - 1);
+    }
+
+    // Resize function for dynamic array
+    void resize(int newCap) {
+        string* newArr = new string[newCap];
+        for (int i = 0; i <= top; i++) {
+            newArr[i] = arr[i];
+        }
+        delete[] arr;
+        arr = newArr;
+        capacity = newCap;
+    }
+
+public:
+    // Constructor
+    Stack(int cap = 2) {
+        capacity = cap;
+        arr = new string[capacity];
+        top = -1;
+    }
+
+    // Push to add items (still needed for building stack)
+    void push(const string& val) {
+        if (top + 1 == capacity) {
+            resize(capacity * 2);
+        }
+        top=top+1;
+        arr[top] = val;
+    }
+
+    // Print stack
+    void print() {
+        if (top == -1) {
+            cout << "Stack is empty!\n";
+            return;
+        }
+        cout << "Stack items: ";
+        for (int i = 0; i <= top; i++) {
+            cout << arr[i];
+            if (i != top) cout << ",";
+        }
+        cout << endl;
+    }
+
+    // Reverse using recursion (without push/pop)
+    void reverse() {
+        reverseRecursive(0, top);
+    }
+};
+
+// ---------------- MAIN DRIVER -----------------
+int main() {
+    Stack st;
+    st.push("A");
+    st.push("B");
+    st.push("C");
+    st.push("D");
+
+    st.print();
+
+    st.reverse();
+
+    cout << "After recursive reversing:\n";
+    st.print();
+
+    return 0;
+}
