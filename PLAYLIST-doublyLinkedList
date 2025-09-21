@@ -1,0 +1,178 @@
+#include<iostream>
+using namespace std;
+
+class Node{
+    public:
+    string songName;
+    Node* next;
+    Node* prev;
+
+    Node(string n){
+        songName=n;
+        next=prev=nullptr;
+    }
+
+};
+
+class Playlist{
+    private:
+    Node* head;
+    Node* tail;
+    Node* current;
+
+    public: 
+    Playlist(){
+        head=tail=current=nullptr;
+    }
+
+    void addToTail(string s){
+        Node* newSong = new Node(s);
+
+        if (head==nullptr){
+            head=tail=current=newSong;
+        }
+
+        else {
+            tail->next=newSong;
+            newSong->prev=tail;
+            tail=newSong;
+        }
+
+        cout<<s<<" added to the playlist!\n"<<endl;
+    }
+
+    void removeSong (string s){
+        Node* temp = head;
+        while (temp!= nullptr && temp->songName!=s){
+            temp=temp->next;
+
+        }
+
+        if (temp==nullptr){
+            cout<<"Song not found!\n"<<endl;
+            return;
+        }
+
+        if (temp==head){
+            head=head->next;
+            if (head!=nullptr){
+                head->prev=nullptr;
+            }
+        }
+
+        if (temp==tail){
+            tail=tail->prev;
+            if (tail!=nullptr){
+                tail->next=nullptr;
+            }
+        }
+
+        if (temp==current){
+            if (current->next!=nullptr){
+                current=current->next;
+            }
+            else {
+                current=current->prev;
+            }
+        }
+
+        if (temp->prev){
+            temp->prev->next=temp->next;
+        }
+
+        if (temp->next){
+            temp->next->prev=temp->prev;
+        }
+
+        cout<<"Song removed from playlist!\n"<<endl;
+        delete temp;
+    }
+    
+    void nextSong(){
+        if (current==nullptr){
+            cout<<"Playlist is empty!\n"<<endl;
+        }
+
+        if (current->next!=nullptr){
+            current=current->next;
+            cout<<"Now Playing: "<<current->songName<<endl;
+        }
+
+        else {
+            cout<<"Replay the playlist, this is was the last song.\n"<<endl;
+        }
+    }
+
+    void previousSong(){
+        if (current==nullptr){
+            cout<<"Playlist is empty!\n"<<endl;
+        }
+
+        if (current->prev!=nullptr){
+            current=current->prev;
+            cout<<"Now Playing: "<<current->songName<<endl;
+        }
+        else {
+            cout<<"This is the first song of the playlist!\n"<<endl;
+        }
+    }
+
+    void goToSong(string s){
+        Node* temp= head;
+        while (temp!=nullptr && temp->songName!=s){
+            temp=temp->next;
+        }
+
+        if (temp==nullptr){
+            cout<<"Song Not Found!\n"<<endl;
+        }
+        else {
+            current=temp;
+            cout<<"Now playing: "<<current->songName<<endl;
+        }
+    }
+
+    void currentSong(){
+        if (current==nullptr){
+            cout<<"No song is playing currently!\n"<<endl;
+        }
+        else {
+            cout<<current->songName<<" is playing!\n"<<endl;
+        }
+    }
+
+    void printPlaylist(){
+        if (head==nullptr){
+            cout<<"Playlist is empty!\n"<<endl;
+            return;
+        }
+
+        cout<<"Your Playlist: \n"<<endl;
+        Node* temp = head;
+        while (temp!=nullptr){
+            cout<<temp->songName<<endl;
+            temp=temp->next;
+        }
+        cout<<endl;
+    }
+};
+
+int main(){
+    Playlist myplaylist;
+    myplaylist.addToTail("Gnarly");
+    myplaylist.addToTail("MIA");
+    myplaylist.addToTail("Right Hand Girl");
+    myplaylist.addToTail("Into You");
+    myplaylist.addToTail("Eyes Don't Lie");
+
+    myplaylist.printPlaylist();
+    myplaylist.currentSong();
+    myplaylist.nextSong();
+    myplaylist.previousSong();
+    myplaylist.goToSong("MIA");
+    myplaylist.removeSong("MIA");
+    myplaylist.currentSong();
+    myplaylist.printPlaylist();
+
+    return 0;
+}
