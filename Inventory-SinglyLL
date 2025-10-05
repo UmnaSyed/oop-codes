@@ -1,0 +1,97 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int data;       
+    Node* next;
+
+    Node(int id) {
+        data = id;
+        next = NULL;
+    }
+};
+
+class Singly {
+public:
+    Node* head;
+    Node* tail;
+
+    Singly() {
+        head = NULL;
+        tail = NULL;
+    }
+
+    void addProduct(int id) {
+        Node* n = new Node(id);
+        if (head == NULL) {
+            head = n;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = n;
+    }
+
+    void sortList() {
+        if (head == NULL || head->next == NULL) {
+            return; 
+        }
+
+        Node* current = head;
+        Node* index = NULL;
+        int tempData;
+
+        while (current->next != NULL) {
+            index = current->next;
+            while (index != NULL) {
+                if (current->data > index->data) {
+                    tempData = current->data;
+                    current->data = index->data;
+                    index->data = tempData;
+                }
+                index = index->next;
+            }
+            current = current->next;
+        }
+    }
+
+    void display() {
+        Node* temp = head;
+        cout << "Inventory:\n";
+
+        if (head == NULL) {
+            cout << "Inventory is empty!" << endl;
+            return;
+        }
+
+        while (temp != NULL) {
+            cout << temp->data << "\n";
+            temp = temp->next;
+        }
+    }
+};
+
+int main() {
+    Singly inventory;
+
+    inventory.addProduct(118);
+    inventory.addProduct(34);
+    inventory.addProduct(5);
+    inventory.addProduct(72);
+    inventory.addProduct(23);
+
+    cout << "Before Sorting:\n";
+    inventory.display();
+
+    inventory.sortList();
+
+    cout << "\nAfter Sorting:\n";
+    inventory.display();
+
+    cout << "\nInventory Sorted!" << endl;
+
+    return 0;
+}
