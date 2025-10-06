@@ -1,3 +1,8 @@
+//You are creating an inventory management system where product IDs are stored in a linked
+//list. Develop a function to sort the product IDs in ascending order so that the inventory list
+//remains organized.
+
+
 #include <iostream>
 using namespace std;
 
