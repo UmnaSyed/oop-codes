@@ -1,0 +1,148 @@
+//You are designing a program to manage a student roll call system using a singly linked list.
+//Students can be added to the list one by one, and the teacher wants the ability to remove students
+//when they leave and display the current roll list.
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Node {
+    public:
+    int rollNo;
+    string name;
+    Node* next;
+
+    Node(int rollNumber, string stdName){
+        rollNo=rollNumber;
+        name=stdName;
+        next=NULL;
+    }
+};
+
+class StudentList {
+public:
+    Node* head;  
+    Node* tail;
+    StudentList() {
+        head = NULL;
+        tail=  NULL;
+    }
+
+    void addStudent(int rollNo, string name) {
+        Node* newNode = new Node(rollNo, name);
+
+        if (head == NULL) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail->next=newNode;
+            tail = newNode;
+        }
+        cout << "Student added: " << name << " (Roll No: " << rollNo << ")\n";
+    }
+
+    void removeStudent(int rollNo) {
+        if (head == NULL) {
+            cout << "No students in this list.\n";
+            return;
+        }
+
+        Node* temp = head;
+        Node* prev = NULL;
+
+        if (temp != NULL && temp->rollNo == rollNo) {
+            head = temp->next;
+
+            if (temp==tail){
+                tail == NULL;
+            }
+
+            cout << "Removed: " << temp->name << " (Roll No: " << temp->rollNo << ")\n";
+            delete temp;
+            return;
+        }
+
+        while (temp != NULL && temp->rollNo != rollNo) {
+            prev = temp;
+            temp = temp->next;
+        }
+
+        if (temp == NULL) {
+            cout << "Student with Roll No " << rollNo << " not found.\n";
+            return;
+        }
+
+        prev->next = temp->next;
+        
+        if (temp == tail){
+            tail = prev;
+        }
+        cout << "Removed: " << temp->name << " (Roll No: " << temp->rollNo << ")\n";
+        delete temp;
+    }
+
+    void displayList() {
+        if (head == NULL) {
+            cout << "Roll call list is empty.\n";
+            return;
+        }
+
+        Node* temp = head;
+        cout << "\nRoll Call List:\n";
+        while (temp != NULL) {
+            cout << "Roll No: " << temp->rollNo << "\nName: " << temp->name << endl;
+            temp = temp->next;
+        }
+    }
+
+    ~StudentList() {
+        Node* temp;
+        while (head != NULL) {
+            temp = head;
+            head = head->next;
+            delete temp;
+        }
+    }
+};
+
+
+int main() {
+    StudentList list;
+    int choice, rollNo;
+    string name;
+
+    do {
+        cout << "1. Add Student\n";
+        cout << "2. Remove Student\n";
+        cout << "3. Display Roll Call List\n";
+        cout << "4. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Enter Roll No: ";
+            cin >> rollNo;
+            cout << "Enter Name: ";
+            cin.ignore();
+            getline(cin, name);
+            list.addStudent(rollNo, name);
+            break;
+        case 2:
+            cout << "Enter Roll No: ";
+            cin >> rollNo;
+            list.removeStudent(rollNo);
+            break;
+        case 3:
+            list.displayList();
+            break;
+        case 4:
+            cout << "Exiting..\n";
+            break;
+        default:
+            cout << "Invalid choice!\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
