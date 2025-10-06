@@ -1,0 +1,112 @@
+//You need to implement a Doubly Linked List in C++. The Doubly Linked List should support
+//the following operations:
+// insertAtEnd(int val): Insert a node with the given integer value at the end of the list.
+// deleteAtFront(): Delete the node at the front of the list.
+// search(int val): Search for a node with the given integer value and return true if found,
+//false otherwise.
+// display(): Display the elements of the Doubly Linked List from front to end.
+
+
+#include <iostream>
+using namespace std;
+
+class DoublyNode {
+public:
+    int data;
+    DoublyNode* prev;
+    DoublyNode* next;
+
+    DoublyNode(int val) {
+        data = val;
+        prev = NULL;
+        next = NULL;
+    }
+};
+
+class Doubly {
+public:
+    DoublyNode* head;
+    DoublyNode* tail;
+
+    Doubly() {
+        head = NULL;
+        tail = NULL;
+    }
+
+    void insertAtEnd(int val) {
+        DoublyNode* n = new DoublyNode(val);
+        if (head == NULL) { 
+            head = tail = n;
+        } else {
+            tail->next = n;
+            n->prev = tail;
+            tail = n;
+        }
+    }
+
+    void deleteAtFront() {
+        if (head == NULL) {
+            cout << "List is empty, nothing to delete!\n";
+            return;
+        }
+        DoublyNode* temp = head;
+        if (head == tail) {
+            head = tail = NULL;
+        } else {
+            head = head->next;
+            head->prev = NULL;
+        }
+        delete temp;
+    }
+
+    bool search(int val) {
+        DoublyNode* temp = head;
+        while (temp != NULL) {
+            if (temp->data == val) {
+                return true;
+            }
+            temp = temp->next;
+        }
+        return false;
+    }
+
+    void display() {
+        if (head == NULL) {
+            cout << "List is empty!\n";
+            return;
+        }
+        DoublyNode* temp = head;
+        cout << "Doubly Linked List: ";
+        while (temp != NULL) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    Doubly doubly;  
+
+    doubly.insertAtEnd(5);
+    doubly.insertAtEnd(114);
+    doubly.insertAtEnd(23);
+    doubly.display();  
+
+    doubly.deleteAtFront();
+    doubly.display();  
+
+    if (doubly.search(20)) {
+        cout << " Found\n";
+    } else {
+        cout << " Not Found\n";
+    }
+
+    if (doubly.search(23)){
+        cout << " Found\n";
+    } else {
+        cout << " Not Found\n";
+    }
+
+    return 0;
+}
