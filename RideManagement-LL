@@ -1,0 +1,104 @@
+//You’ve been entrusted with creating an efficient ride management system for an amusement
+//park. The park provides a fixed number of ride seats, and visitors can reserve their spots ahead
+//of time. To streamline this process, you decide to use a particular linked list data structure where
+//the first seat seamlessly connects with the last. Provide a C++ implementation of this chosen
+//linked list data structure to demonstrate its suitability for managing ride seat reservations in the
+//amusement park.
+
+
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int seatID;   
+    bool reserved; 
+    Node* next;
+
+    Node(int id) {
+        seatID = id;
+        reserved = false;
+        next = NULL;
+    }
+};
+
+class CircularSeatList {
+public:
+    Node* head;
+    Node* tail;
+
+    CircularSeatList() {
+        head = NULL;
+        tail = NULL;
+    }
+
+    void createSeats(int totalSeats) {
+        for (int i = 1; i <= totalSeats; i++) {
+            Node* n = new Node(i);
+            if (!head) {
+                head = tail = n;
+                tail->next = head;
+            } else {
+                tail->next = n;
+                tail = n;
+                tail->next = head; 
+            }
+        }
+    }
+
+    void reserveSeat(int id) {
+        if (!head) {
+            cout << "No seats available!\n";
+            return;
+        }
+        Node* temp = head;
+        do {
+            if (temp->seatID == id) {
+                if (!temp->reserved) {
+                    temp->reserved = true;
+                    cout << "Seat: " << id << " reserved successfully!\n";
+                } else {
+                    cout << "Seat: " << id << " is already reserved.\n";
+                }
+                return;
+            }
+            temp = temp->next;
+        } while (temp != head);
+
+        cout << "Seat: " << id << " not found.\n";
+    }
+
+    void displaySeats() {
+        if (!head) {
+            cout << "No seats available!\n";
+            return;
+        }
+        Node* temp = head;
+        cout << "\nRide Seat Status:\n";
+        do {
+            cout << "Seat " << temp->seatID << ": ";
+            if (temp->reserved) {
+                cout << "Reserved.\n";
+            } else {
+                cout << "Available.\n";
+            }
+            cout << endl;
+            temp = temp->next;
+        } while (temp != head);
+    }
+};
+
+int main() {
+    CircularSeatList ride;
+    ride.createSeats(15);  
+
+    ride.displaySeats();
+
+    ride.reserveSeat(7);
+    ride.reserveSeat(3);
+    ride.reserveSeat(12); 
+
+    ride.displaySeats();
+
+    return 0;
+}
