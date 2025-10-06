@@ -1,0 +1,79 @@
+// You are working on a photo gallery application where photos are stored in a linked list. Create
+//a function to print the photo IDs in reverse order so that the latest photo appears first.
+
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int photoID;
+    Node* next;
+
+    Node(int id) {
+        photoID = id;
+        next = NULL;
+    }
+};
+
+class PhotoGallery {
+public:
+    Node* head;
+    Node* tail;
+
+    PhotoGallery() {
+        head = NULL;
+        tail = NULL;
+    }
+
+    void addPhoto(int id) {
+        Node* n = new Node(id);
+        if (head == NULL) {
+            head = tail = n;
+        } else {
+            tail->next = n;
+            tail = n;
+        }
+    }
+
+    void display() {
+        Node* temp = head;
+        cout << "Photos in gallery:\n";
+        while (temp != NULL) {
+            cout << temp->photoID << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+
+    void displayReverseHelper(Node* node) {
+        if (node == NULL) {
+            return;
+        }
+        displayReverseHelper(node->next); 
+        cout << node->photoID << " "; 
+    }
+
+    void displayReverse() {
+        if (head == NULL) {
+            cout << "Gallery is empty!\n";
+            return;
+        }
+        cout << "Photos in reverse order:\n";
+        displayReverseHelper(head);
+        cout << endl;
+    }
+};
+
+int main() {
+    PhotoGallery gallery;
+
+    gallery.addPhoto(23);
+    gallery.addPhoto(19);
+    gallery.addPhoto(20);
+    gallery.addPhoto(5);
+
+    gallery.display();
+    gallery.displayReverse();
+
+    return 0;
+}
