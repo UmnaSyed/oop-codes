@@ -1,0 +1,114 @@
+// Q1: Suppose you are given a list of student records, where each record contains a student's name
+// and their score on a recent test. You need to sort this list by score in ascending order using Radix
+// Sort, and represent the list using a linked list in C++.
+// Design and implement a Radix Sort algorithm using a linked list to sort the student records.
+// Assume that each student's score is an integer between 0 and 100, and that there are no more than
+// 10,000 students in the list.
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Node {
+    string name;
+    int score;
+    Node* next;
+};
+
+void addNode(Node** head, string name, int score) {
+    Node* newNode = new Node();
+    newNode->name = name;
+    newNode->score = score;
+    newNode->next = *head;
+    *head = newNode;
+}
+
+int getMax(Node* head) {
+    int maxVal = 0;
+    while (head != nullptr) {
+        if (head->score > maxVal)
+            maxVal = head->score;
+        head = head->next;
+    }
+    return maxVal;
+}
+
+int getDigit(int number, int place) {
+    int divisor = 1;
+    for (int i = 0; i < place; i++)
+        divisor *= 10;
+    return (number / divisor) % 10;
+}
+
+Node* countingSort(Node* head, int place) {
+    Node* output[10] = { nullptr };
+    Node* tails[10] = { nullptr };
+    Node* curr = head;
+
+    while (curr != nullptr) {
+        int digit = getDigit(curr->score, place);
+        Node* nextNode = curr->next;
+        curr->next = nullptr;
+
+        if (output[digit] == nullptr) {
+            output[digit] = tails[digit] = curr;
+        } else {
+            tails[digit]->next = curr;
+            tails[digit] = curr;
+        }
+        curr = nextNode;
+    }
+
+    Node* newHead = nullptr;
+    Node* newTail = nullptr;
+    for (int i = 0; i < 10; i++) {
+        if (output[i] != nullptr) {
+            if (newHead == nullptr) {
+                newHead = output[i];
+                newTail = tails[i];
+            } else {
+                newTail->next = output[i];
+                newTail = tails[i];
+            }
+        }
+    }
+    return newHead;
+}
+
+void radixSort(Node** head) {
+    int maxVal = getMax(*head);
+    int numDigits = 0;
+
+    int temp = maxVal;
+    do {
+        numDigits++;
+        temp /= 10;
+    } while (temp != 0);
+
+    for (int place = 0; place < numDigits; place++)
+        *head = countingSort(*head, place);
+}
+
+void display(Node* head) {
+    while (head != nullptr) {
+        cout << head->name << " " << head->score << endl;
+        head = head->next;
+    }
+}
+
+int main() {
+    Node* head = nullptr;
+
+    addNode(&head, "Iqra", 80);
+    addNode(&head, "Aseelah", 50);
+    addNode(&head, "Samiya", 30);
+    addNode(&head, "Vaania", 70);
+    addNode(&head, "Abeer", 75);
+
+    radixSort(&head);
+
+    cout << "Sorted list of student records:\n";
+    display(head);
+
+    return 0;
+}
