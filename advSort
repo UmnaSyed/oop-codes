@@ -1,0 +1,210 @@
+// Q5: You have been given two unsorted arrays, arr1 and arr2, each containing 10 integers. You
+// need to combine the two arrays into a single sorted array using either Radix Sort or Merge Sort.  Write a C++ program to combine arr1 and arr2 using Radix Sort and print the sorted array.  Write a C++ program to combine arr1 and arr2 using Merge Sort and print the sorted array.
+// Note: You can use the code examples I provided earlier for reference, but you will need to modify
+// the code to handle two arrays instead of one.
+// In the quick sort algorithm, the selection of a pivot element is of utmost importance. There are
+// different
+// ways to select the pivot element. Your task is to implement quick sort using the following pivot
+// selection
+// techniques and count the number of comparisons of each approach:
+// Note: The implementation should be inplace.
+// • Select the first element as pivot.
+// • Select any random element as pivot
+// • Select middle element as pivot
+// • Use median approach for pivot selection
+
+#include <iostream>
+using namespace std;
+
+void merge(int arr[], int left, int mid, int right) {
+    int n1 = mid - left + 1, n2 = right - mid;
+    int leftArr[10000], rightArr[10000];
+
+    for (int i = 0; i < n1; i++) leftArr[i] = arr[left + i];
+    for (int j = 0; j < n2; j++) rightArr[j] = arr[mid + 1 + j];
+
+    int i = 0, j = 0, k = left;
+    while (i < n1 && j < n2) {
+        if (leftArr[i] <= rightArr[j]) arr[k++] = leftArr[i++];
+        else arr[k++] = rightArr[j++];
+    }
+    while (i < n1) arr[k++] = leftArr[i++];
+    while (j < n2) arr[k++] = rightArr[j++];
+}
+
+void mergeSort(int arr[], int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+        merge(arr, left, mid, right);
+    }
+}
+
+int getMax(int arr[], int n) {
+    int max = arr[0];
+    for (int i = 1; i < n; i++)
+        if (arr[i] > max)
+            max = arr[i];
+    return max;
+}
+
+void countingSort(int arr[], int n, int place) {
+    int output[10000], count[10];
+    for (int i = 0; i < 10; i++) count[i] = 0;
+
+    for (int i = 0; i < n; i++)
+        count[(arr[i] / place) % 10]++;
+
+    for (int i = 1; i < 10; i++)
+        count[i] += count[i - 1];
+
+    for (int i = n - 1; i >= 0; i--) {
+        int digit = (arr[i] / place) % 10;
+        output[count[digit] - 1] = arr[i];
+        count[digit]--;
+    }
+
+    for (int i = 0; i < n; i++)
+        arr[i] = output[i];
+}
+
+void radixSort(int arr[], int n) {
+    int max = getMax(arr, n);
+    for (int place = 1; max / place > 0; place *= 10)
+        countingSort(arr, n, place);
+}
+
+int comparisons = 0;
+
+void swap(int &a, int &b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
+int partitionFirstPivot(int arr[], int low, int high) {
+    int pivot = arr[low];
+    int i = low + 1;
+    for (int j = low + 1; j <= high; j++) {
+        comparisons++;
+        if (arr[j] < pivot) {
+            swap(arr[i], arr[j]);
+            i++;
+        }
+    }
+    swap(arr[low], arr[i - 1]);
+    return i - 1;
+}
+
+int partitionMiddlePivot(int arr[], int low, int high) {
+    int mid = (low + high) / 2;
+    swap(arr[mid], arr[high]);
+    int pivot = arr[high];
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        comparisons++;
+        if (arr[j] < pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+int medianOfThree(int a, int b, int c) {
+    if ((a >= b && a <= c) || (a <= b && a >= c)) return a;
+    else if ((b >= a && b <= c) || (b <= a && b >= c)) return b;
+    return c;
+}
+
+int partitionMedianPivot(int arr[], int low, int high) {
+    int mid = (low + high) / 2;
+    int pivotVal = medianOfThree(arr[low], arr[mid], arr[high]);
+    int pivotIndex;
+    if (pivotVal == arr[low]) pivotIndex = low;
+    else if (pivotVal == arr[mid]) pivotIndex = mid;
+    else pivotIndex = high;
+
+    swap(arr[pivotIndex], arr[high]);
+    int pivot = arr[high];
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        comparisons++;
+        if (arr[j] < pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+void quickSort(int arr[], int low, int high, int pivotType) {
+    if (low < high) {
+        int pi;
+        if (pivotType == 1)
+            pi = partitionFirstPivot(arr, low, high);
+        else if (pivotType == 2)
+            pi = partitionMiddlePivot(arr, low, high);
+        else
+            pi = partitionMedianPivot(arr, low, high);
+        quickSort(arr, low, pi - 1, pivotType);
+        quickSort(arr, pi + 1, high, pivotType);
+    }
+}
+
+int main() {
+    int arr1[10] = {32, 5, 7, 12, 45, 1, 9, 10, 27, 16};
+    int arr2[10] = {15, 42, 3, 8, 19, 28, 13, 6, 11, 20};
+    int combined[20];
+
+    for (int i = 0; i < 10; i++) combined[i] = arr1[i];
+    for (int i = 0; i < 10; i++) combined[10 + i] = arr2[i];
+
+    cout << "Original Combined Array:\n";
+    for (int i = 0; i < 20; i++) cout << combined[i] << " ";
+    cout << "\n\n";
+
+    int mergeSorted[20];
+    for (int i = 0; i < 20; i++) mergeSorted[i] = combined[i];
+    mergeSort(mergeSorted, 0, 19);
+    cout << "After Merge Sort:\n";
+    for (int i = 0; i < 20; i++) cout << mergeSorted[i] << " ";
+    cout << "\n\n";
+
+    int radixSorted[20];
+    for (int i = 0; i < 20; i++) radixSorted[i] = combined[i];
+    radixSort(radixSorted, 20);
+    cout << "After Radix Sort:\n";
+    for (int i = 0; i < 20; i++) cout << radixSorted[i] << " ";
+    cout << "\n\n";
+
+    int quick1[20], quick2[20], quick3[20];
+    for (int i = 0; i < 20; i++) {
+        quick1[i] = combined[i];
+        quick2[i] = combined[i];
+        quick3[i] = combined[i];
+    }
+
+    comparisons = 0;
+    quickSort(quick1, 0, 19, 1);
+    cout << "Quick Sort (First Pivot): ";
+    for (int i = 0; i < 20; i++) cout << quick1[i] << " ";
+    cout << "\nComparisons: " << comparisons << "\n\n";
+
+    comparisons = 0;
+    quickSort(quick2, 0, 19, 2);
+    cout << "Quick Sort (Middle Pivot): ";
+    for (int i = 0; i < 20; i++) cout << quick2[i] << " ";
+    cout << "\nComparisons: " << comparisons << "\n\n";
+
+    comparisons = 0;
+    quickSort(quick3, 0, 19, 3);
+    cout << "Quick Sort (Median of 3 Pivot): ";
+    for (int i = 0; i < 20; i++) cout << quick3[i] << " ";
+    cout << "\nComparisons: " << comparisons << "\n";
+
+    return 0;
+}
