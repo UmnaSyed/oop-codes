@@ -1,0 +1,86 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+#define MAX 1000   
+
+class Stack {
+private:
+    int arr[MAX];
+    int top;
+public:
+    Stack() {
+        top = -1;
+    }
+
+    bool isEmpty() {
+        return (top == -1);
+    }
+
+    bool isFull() {
+        return (top == MAX - 1);
+    }
+
+    void push(int x) {
+        if (isFull()) {
+            cout << "Stack Overflow!" << endl;
+            return;
+        }
+        arr[++top] = x;
+    }
+
+    int pop() {
+        if (isEmpty()) {
+            return 0;  
+        }
+        return arr[top--];
+    }
+
+    int peek() {
+        if (isEmpty()) return -1;
+        return arr[top];
+    }
+};
+
+void addingLargeNumbers() {
+    Stack operandStack1, operandStack2, resultStack;
+    char num1[MAX], num2[MAX];
+
+    cout << "Enter first large number: ";
+    cin >> num1;
+    cout << "Enter second large number: ";
+    cin >> num2;
+
+    for (int i = 0; num1[i] != '\0'; i++) {
+        operandStack1.push(num1[i] - '0'); 
+    }
+
+    for (int i = 0; num2[i] != '\0'; i++) {
+        operandStack2.push(num2[i] - '0');
+    }
+
+    int carry = 0;
+
+    while (!operandStack1.isEmpty() || !operandStack2.isEmpty()) {
+        int digit1 = operandStack1.pop();
+        int digit2 = operandStack2.pop();
+
+        int sum = digit1 + digit2 + carry;
+        resultStack.push(sum % 10);
+        carry = sum / 10;
+    }
+
+    if (carry != 0)
+        resultStack.push(carry);
+
+    cout << "\nResult of addition: ";
+    while (!resultStack.isEmpty()) {
+        cout << resultStack.pop();
+    }
+    cout << endl;
+}
+
+int main() {
+    addingLargeNumbers();
+    return 0;
+}
