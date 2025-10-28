@@ -1,0 +1,86 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int value;
+    Node* next;
+
+    Node(int v) {
+        value = v;
+        next = NULL;
+    }
+};
+
+class Stack {
+private:
+    Node* top;  // top pointer
+
+public:
+    Stack() {
+        top = NULL;
+    }
+
+    void push(int val) {
+        Node* newNode = new Node(val);
+        newNode->next = top;
+        top = newNode;
+    }
+
+    void pop() {
+        if (top == NULL) {
+            cout << "Stack Underflow!" << endl;
+            return;
+        }
+        Node* temp = top;
+        cout << "Popped: " << top->value << endl;
+        top = top->next;
+        delete temp;
+    }
+
+    void display() {
+        if (top == NULL) {
+            cout << "Stack is empty!" << endl;
+            return;
+        }
+        cout << "Stack elements (top to bottom): ";
+        Node* temp = top;
+        while (temp != NULL) {
+            cout << temp->value << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+
+    int peek() {
+        if (top == NULL) {
+            cout << "Stack is empty!" << endl;
+            return -1;
+        }
+        return top->value;
+    }
+};
+
+int main() {
+    Stack s;
+    int n, val;
+
+    cout << "Enter number of elements to push: ";
+    cin >> n;
+
+    for (int i = 0; i < n; i++) {
+        cout << "Enter value " << i + 1 << ": ";
+        cin >> val;
+        s.push(val);
+    }
+
+    cout << "\nCurrent stack: ";
+    s.display();
+
+    s.pop();
+    cout << "\nAfter pop: ";
+    s.display();
+
+    cout << "\nTop element now: " << s.peek() << endl;
+    return 0;
+}
