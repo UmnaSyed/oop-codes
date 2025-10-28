@@ -1,0 +1,87 @@
+#include <iostream>
+using namespace std;
+
+class Queue {
+private:
+    int arr[100];
+    int front, rear, size;
+
+public:
+    Queue(int s = 100) {
+        size = s;
+        front = -1;
+        rear = -1;
+    }
+
+    void enqueue(int val) {
+        if (rear == size - 1) {
+            cout << "Queue Overflow! Cannot enqueue " << val << endl;
+            return;
+        }
+
+        if (front == -1)  // first element being added
+            front = 0;
+
+        arr[++rear] = val;
+        cout << "Enqueued: " << val << endl;
+    }
+
+    void dequeue() {
+        if (front == -1 || front > rear) {
+            cout << "Queue Underflow! Nothing to dequeue." << endl;
+            return;
+        }
+
+        cout << "Dequeued: " << arr[front++] << endl;
+
+        // if queue becomes empty again
+        if (front > rear) {
+            front = rear = -1;
+        }
+    }
+
+    void display() {
+        if (front == -1) {
+            cout << "Queue is empty!" << endl;
+            return;
+        }
+
+        cout << "Queue elements (front to rear): ";
+        for (int i = front; i <= rear; i++) {
+            cout << arr[i] << " ";
+        }
+        cout << endl;
+    }
+
+    int peek() {
+        if (front == -1) {
+            cout << "Queue is empty!" << endl;
+            return -1;
+        }
+        return arr[front];
+    }
+};
+
+int main() {
+    Queue q(5);  // queue of size 5
+    int n, val;
+
+    cout << "Enter number of elements to enqueue: ";
+    cin >> n;
+
+    for (int i = 0; i < n; i++) {
+        cout << "Enter value " << i + 1 << ": ";
+        cin >> val;
+        q.enqueue(val);
+    }
+
+    cout << endl;
+    q.display();
+
+    q.dequeue();
+    q.display();
+
+    cout << "Front element: " << q.peek() << endl;
+
+    return 0;
+}
