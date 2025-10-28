@@ -1,0 +1,100 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int value;
+    Node* next;
+
+    Node(int v) {
+        value = v;
+        next = NULL;
+    }
+};
+
+class Queue {
+private:
+    Node* front;
+    Node* rear;
+
+public:
+    Queue() {
+        front = rear = NULL;
+    }
+
+    void enqueue(int val) {
+        Node* newNode = new Node(val);
+
+        if (rear == NULL) {  // queue is empty
+            front = rear = newNode;
+        } else {
+            rear->next = newNode;
+            rear = newNode;
+        }
+
+        cout << "Enqueued: " << val << endl;
+    }
+
+    void dequeue() {
+        if (front == NULL) {
+            cout << "Queue Underflow! Nothing to dequeue." << endl;
+            return;
+        }
+
+        Node* temp = front;
+        cout << "Dequeued: " << front->value << endl;
+        front = front->next;
+
+        if (front == NULL)  // queue became empty
+            rear = NULL;
+
+        delete temp;
+    }
+
+    void display() {
+        if (front == NULL) {
+            cout << "Queue is empty!" << endl;
+            return;
+        }
+
+        cout << "Queue elements (front to rear): ";
+        Node* temp = front;
+        while (temp != NULL) {
+            cout << temp->value << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+
+    int peek() {
+        if (front == NULL) {
+            cout << "Queue is empty!" << endl;
+            return -1;
+        }
+        return front->value;
+    }
+};
+
+int main() {
+    Queue q;
+    int n, val;
+
+    cout << "Enter number of elements to enqueue: ";
+    cin >> n;
+
+    for (int i = 0; i < n; i++) {
+        cout << "Enter value " << i + 1 << ": ";
+        cin >> val;
+        q.enqueue(val);
+    }
+
+    cout << "\nCurrent queue: ";
+    q.display();
+
+    q.dequeue();
+    cout << "\nAfter dequeue: ";
+    q.display();
+
+    cout << "\nFront element now: " << q.peek() << endl;
+    return 0;
+}
