@@ -1,0 +1,154 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int key;
+    Node* left;
+    Node* right;
+    Node(int val) {
+        key = val;
+        left = right = nullptr;
+    }
+};
+
+class Stack {
+private:
+    Node* arr[100];  
+    int top;
+
+public:
+    Stack() {
+        top = -1;
+    }
+
+    bool isEmpty() {
+        return top == -1;
+    }
+
+    void push(Node* node) {
+        if (top >= 99) {
+            cout << "Stack Overflow!" << endl;
+            return;
+        }
+        arr[++top] = node;
+    }
+
+    Node* pop() {
+        if (isEmpty()) {
+            cout << "Stack Underflow!" << endl;
+            return nullptr;
+        }
+        return arr[top--];
+    }
+
+    Node* peek() {
+        if (isEmpty())
+            return nullptr;
+        return arr[top];
+    }
+};
+
+class BST {
+private:
+    Node* root;
+
+    Node* insert(Node* node, int val) {
+        if (node == nullptr)
+            return new Node(val);
+        if (val < node->key)
+            node->left = insert(node->left, val);
+        else if (val > node->key)
+            node->right = insert(node->right, val);
+        return node;
+    }
+
+public:
+    BST() {
+        root = nullptr;
+    }
+
+    void insert(int val) {
+        root = insert(root, val);
+    }
+
+    void inorder() {
+        cout << "\nInorder: ";
+        Stack st;
+        Node* curr = root;
+
+        while (curr != nullptr || !st.isEmpty()) {
+            while (curr != nullptr) {
+                st.push(curr);
+                curr = curr->left;
+            }
+            curr = st.pop();
+            cout << curr->key << " ";
+            curr = curr->right;
+        }
+        cout << endl;
+    }
+
+    void preorder() {
+        cout << "\nPreorder: ";
+        if (root == nullptr) return;
+
+        Stack st;
+        st.push(root);
+
+        while (!st.isEmpty()) {
+            Node* curr = st.pop();
+            cout << curr->key << " ";
+
+            if (curr->right != nullptr)
+                st.push(curr->right);
+            if (curr->left != nullptr)
+                st.push(curr->left);
+        }
+        cout << endl;
+    }
+
+    void postorder() {
+        cout << "\nPostorder: ";
+        if (root == nullptr) return;
+
+        Stack st;
+        Node* lastVisited = nullptr;
+        Node* curr = root;
+
+        while (!st.isEmpty() || curr != nullptr) {
+            if (curr != nullptr) {
+                st.push(curr);
+                curr = curr->left;
+            } else {
+                Node* peekNode = st.peek();
+                if (peekNode->right != nullptr && lastVisited != peekNode->right) {
+                    curr = peekNode->right;
+                } else {
+                    cout << peekNode->key << " ";
+                    lastVisited = st.pop();
+                }
+            }
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    BST tree;
+    int n, val;
+
+    cout << "Enter number of customer keys to insert: ";
+    cin >> n;
+
+    cout << "Enter " << n << " keys: ";
+    for (int i = 0; i < n; i++) {
+        cin >> val;
+        tree.insert(val);
+    }
+
+    tree.inorder();
+    tree.preorder();
+    tree.postorder();
+
+    return 0;
+}
