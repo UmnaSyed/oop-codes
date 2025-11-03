@@ -1,0 +1,93 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int ISBN;
+    Node* left;
+    Node* right;
+    Node(int val) {
+        ISBN = val;
+        left = right = nullptr;
+    }
+};
+
+class BST {
+private:
+    Node* root;
+
+    Node* insert(Node* node, int val) {
+        if (node == nullptr)
+            return new Node(val);
+        if (val < node->ISBN)
+            node->left = insert(node->left, val);
+        else if (val > node->ISBN)
+            node->right = insert(node->right, val);
+        return node;
+    }
+
+    void inorder(Node* node) {
+        if (node == nullptr) return;
+        inorder(node->left);
+        cout << node->ISBN << " ";
+        inorder(node->right);
+    }
+
+    void preorder(Node* node) {
+        if (node == nullptr) return;
+        cout << node->ISBN << " ";
+        preorder(node->left);
+        preorder(node->right);
+    }
+
+    void postorder(Node* node) {
+        if (node == nullptr) return;
+        postorder(node->left);
+        postorder(node->right);
+        cout << node->ISBN << " ";
+    }
+
+public:
+    BST() { root = nullptr; }
+
+    void insert(int val) {
+        root = insert(root, val);
+    }
+
+    void inorder_traversal() {
+        cout << "\nInorder Traversal: ";
+        inorder(root);
+        cout << endl;
+    }
+
+    void preorder_traversal() {
+        cout << "\nPreorder Traversal: ";
+        preorder(root);
+        cout << endl;
+    }
+
+    void postorder_traversal() {
+        cout << "\nPostorder Traversal: ";
+        postorder(root);
+        cout << endl;
+    }
+};
+
+int main() {
+    BST tree;
+    int n;
+    cout << "Enter number of books to insert: ";
+    cin >> n;
+
+    cout << "Enter " << n << " ISBN numbers:\n";
+    for (int i = 0; i < n; i++) {
+        int isbn;
+        cin >> isbn;
+        tree.insert(isbn);
+    }
+
+    tree.inorder_traversal();
+    tree.preorder_traversal();
+    tree.postorder_traversal();
+
+    return 0;
+}
