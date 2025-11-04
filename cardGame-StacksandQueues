@@ -1,0 +1,129 @@
+#include <iostream>
+using namespace std;
+
+class cardGame{
+    private:
+    int deck[100];
+    int front;
+
+    int A[100], topA;
+    int B[100], topB;
+    int C[100], topC;
+    int D[100], topD;
+
+    public:
+    cardGame(){
+        for (int i=0; i<100; i++){
+            deck[i]=i+1;
+        }
+
+        for (int i=0; i<50; i++){
+            int j = (i * 3 + 9) % 100;
+            int temp = deck[i];
+            deck[i] = deck [j];
+            deck[j] = temp;
+        }
+
+        front = 0; 
+        topA = topB = topC = topD = -1;
+    }
+
+    void push(int arr[], int &top, int val){
+        if (top<99){
+            arr[++top]=val;
+        }
+    }
+
+    int pileCount(int top){
+        return top+1;
+    }
+
+    void playGame(){
+        for (int round = 1; round < 25; round++){
+            if (front+4>100){
+                break;
+            }
+
+            int cardA = deck[front++];
+            int cardB = deck[front++];
+            int cardC = deck[front++];
+            int cardD = deck[front++];
+
+            cout<<"Round"<<round<< "\n";
+            cout<<"A - "<<cardA<<" B - "<<cardB<<" C - "<<cardC<<" D - "<<cardD<<"\n";
+        
+            int maxCard=cardA;
+            char winner = 'A';
+
+            if (cardB > maxCard){
+                maxCard = cardB;
+                winner = 'B';
+            }
+            else if (cardC > maxCard){
+                maxCard = cardC;
+                winner = 'C';
+            }
+            else if (cardD > maxCard){
+                maxCard=cardD;
+                winner = 'D';
+            }
+
+            cout<<"Winner: "<<winner<<endl;
+
+            if (winner == 'A'){
+                push(A, topA, cardA);
+                push(A, topA, cardB);
+                push(A, topA, cardC);
+                push(A, topA, cardD);
+            }
+            else if (winner == 'B'){
+                push(B, topB, cardA);
+                push(B, topB, cardB);
+                push(B, topB, cardC);
+                push(B, topB, cardD);
+            }
+            else if (winner == 'C'){
+                push(C, topC, cardA);
+                push(C, topC, cardB);
+                push(C, topC, cardC);
+                push(C, topC, cardD);
+            }
+            else{
+                push(D, topD, cardA);
+                push(D, topD, cardB);
+                push(D, topD, cardC);
+                push(D, topD, cardD);
+            }
+        }
+
+        int countA = pileCount(topA);
+        int countB = pileCount(topB);
+        int countC = pileCount(topC);
+        int countD = pileCount(topD);
+        
+        cout << "A: " << countA << " cards\n";
+        cout << "B: " << countB << " cards\n";
+        cout << "C: " << countC << " cards\n";
+        cout << "D: " << countD << " cards\n";
+
+        int maxCount = countA;
+        char winner = 'A';
+
+        if (countB > maxCount) 
+            { maxCount = countB; winner = 'B'; }
+        else if (countC > maxCount) 
+            { maxCount = countC; winner = 'C'; }
+        else
+            { maxCount = countD; winner = 'D'; }
+
+        cout << "\nWinner of the game: Player " << winner << "!\n";
+
+    }
+};
+
+int main(){
+    cardGame game;
+    game.playGame();
+
+    return 0;
+}
