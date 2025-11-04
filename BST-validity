@@ -56,10 +56,6 @@ class BST{
         count=0;
     }
 
-    void insertNode(int val){
-        root = insert(root, val);
-    }
-
     void countBST(){
         int minVal, maxVal;
 
