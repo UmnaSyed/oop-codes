@@ -5,37 +5,25 @@
 #include <iostream>
 using namespace std;
 
+// Merge two halves
 void merge(int arr[], int left, int mid, int right) {
-    int n1 = mid - left + 1;
-    int n2 = right - mid;
-    
-    // Temporary arrays
-    int* L = new int[n1];
-    int* R = new int[n2];
-    
-    // Copy data
-    for (int i = 0; i < n1; i++)
-        L[i] = arr[left + i];
-    for (int j = 0; j < n2; j++)
-        R[j] = arr[mid + 1 + j];
-    
-    // Merge
+    int n1 = mid - left + 1, n2 = right - mid;
+    int leftArr[10000], rightArr[10000];
+
+    for (int i = 0; i < n1; i++) leftArr[i] = arr[left + i];
+    for (int j = 0; j < n2; j++) rightArr[j] = arr[mid + 1 + j];
+
     int i = 0, j = 0, k = left;
     while (i < n1 && j < n2) {
-        if (L[i] <= R[j])
-            arr[k++] = L[i++];
-        else
-            arr[k++] = R[j++];
+        if (leftArr[i] <= rightArr[j]) arr[k++] = leftArr[i++];
+        else arr[k++] = rightArr[j++];
     }
-    
-    // Copy remaining elements
-    while (i < n1) arr[k++] = L[i++];
-    while (j < n2) arr[k++] = R[j++];
-    
-    delete[] L;
-    delete[] R;
+
+    while (i < n1) arr[k++] = leftArr[i++];
+    while (j < n2) arr[k++] = rightArr[j++];
 }
 
+// Recursive merge sort
 void mergeSort(int arr[], int left, int right) {
     if (left < right) {
         int mid = left + (right - left) / 2;
@@ -47,20 +35,20 @@ void mergeSort(int arr[], int left, int right) {
 
 int main() {
     int N;
-    cout << "Enter number of families (houses): ";
+    cout << "Enter number of houses (families): ";
     cin >> N;
 
-    int* family = new int[N];
+    int arr[10000];
     cout << "Enter number of members in each family:\n";
     for (int i = 0; i < N; i++)
-        cin >> family[i];
+        cin >> arr[i];
 
-    mergeSort(family, 0, N - 1);
+    mergeSort(arr, 0, N - 1);
 
-    cout << "\nReshuffled house allocation (increasing order):\n";
+    cout << "\nReshuffled arrangement (according to rule):\n";
     for (int i = 0; i < N; i++)
-        cout << family[i] << " ";
+        cout << arr[i] << " ";
+    cout << endl;
 
-    delete[] family;
     return 0;
 }
