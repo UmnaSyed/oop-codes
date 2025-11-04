@@ -22,20 +22,6 @@ class BST{
     Node* root;
     int count;
 
-    Node* insert(Node* root, int val){
-        if (root==nullptr){
-            return new Node (val);
-        }
-
-        if (val < root->data){
-            root->left = insert(root->left, val);
-        }
-        else if (val > root->data){
-            root->right = insert(root->right, val);
-        }
-        return root;
-    }
-
     bool isBST(Node* root, int &minVal, int &maxVal){
         if (root==nullptr){
             minVal=9999999;
