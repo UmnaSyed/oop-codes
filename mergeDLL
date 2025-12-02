@@ -1,0 +1,89 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+    Node* prev;
+    Node(int d): data(d), next(NULL), prev(NULL) {}
+};
+
+void insertEnd(Node*& head, int val) {
+    Node* n = new Node(val);
+    if (!head) { head = n; return; }
+
+    Node* t = head;
+    while (t->next) t = t->next;
+
+    t->next = n;
+    n->prev = t;
+}
+
+Node* mergeDLL(Node* a, Node* b) {
+    if (!a) return b;
+    if (!b) return a;
+
+    if (a->data <= b->data) {
+        a->next = mergeDLL(a->next, b);
+        if (a->next) a->next->prev = a;
+        a->prev = NULL;
+        return a;
+    } else {
+        b->next = mergeDLL(a, b->next);
+        if (b->next) b->next->prev = b;
+        b->prev = NULL;
+        return b;
+    }
+}
+
+void splitDLL(Node* head, Node*& a, Node*& b) {
+    Node* slow = head;
+    Node* fast = head->next;
+
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    a = head;
+    b = slow->next;
+
+    if (b) b->prev = NULL;
+    slow->next = NULL;
+}
+
+void mergeSortDLL(Node*& head) {
+    if (!head || !head->next) return;
+
+    Node *a, *b;
+    splitDLL(head, a, b);
+
+    mergeSortDLL(a);
+    mergeSortDLL(b);
+
+    head = mergeDLL(a, b);
+}
+
+void printDLL(Node* head) {
+    while (head) {
+        cout << head->data << " ";
+        head = head->next;
+    }
+    cout << endl;
+}
+
+int main() {
+    Node* head = NULL;
+    insertEnd(head, 5);
+    insertEnd(head, 1);
+    insertEnd(head, 8);
+    insertEnd(head, 2);
+
+    cout << "DLL Before: ";
+    printDLL(head);
+
+    mergeSortDLL(head);
+
+    cout << "DLL After: ";
+    printDLL(head);
+}
