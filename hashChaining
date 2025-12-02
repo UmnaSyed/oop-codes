@@ -1,0 +1,120 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int data;
+    Node* next;
+
+    Node(int value) {
+        data = value;
+        next = NULL;
+    }
+};
+
+class HashTable {
+private:
+    static const int SIZE = 10;
+    Node* table[SIZE];
+
+public:
+    HashTable() {
+        for (int i = 0; i < SIZE; i++)
+            table[i] = NULL;
+    }
+
+    int hashFunction(int key) {
+        return key % SIZE;
+    }
+
+    void insert(int key) {
+        int index = hashFunction(key);
+        Node* newNode = new Node(key);
+
+        if (table[index] == NULL) {
+            table[index] = newNode;
+        }
+        else {
+            // Insert at beginning for simplicity
+            newNode->next = table[index];
+            table[index] = newNode;
+        }
+    }
+
+    bool search(int key) {
+        int index = hashFunction(key);
+        Node* temp = table[index];
+
+        while (temp != NULL) {
+            if (temp->data == key)
+                return true;
+            temp = temp->next;
+        }
+        return false;
+    }
+
+    void removeKey(int key) {
+        int index = hashFunction(key);
+        Node* temp = table[index];
+        Node* prev = NULL;
+
+        while (temp != NULL) {
+            if (temp->data == key) {
+                if (prev == NULL) {
+                    table[index] = temp->next; // deleting first node
+                }
+                else {
+                    prev->next = temp->next;
+                }
+                delete temp;
+                cout << "Key " << key << " deleted.\n";
+                return;
+            }
+            prev = temp;
+            temp = temp->next;
+        }
+
+        cout << "Key not found!\n";
+    }
+
+    void display() {
+        cout << "\nHash Table (Chaining):\n";
+        for (int i = 0; i < SIZE; i++) {
+            cout << i << " -> ";
+            Node* temp = table[i];
+            if (temp == NULL) {
+                cout << "NULL";
+            }
+            else {
+                while (temp != NULL) {
+                    cout << temp->data << " -> ";
+                    temp = temp->next;
+                }
+                cout << "NULL";
+            }
+            cout << endl;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    HashTable h;
+
+    h.insert(5);
+    h.insert(15);
+    h.insert(25);
+    h.insert(7);
+    h.insert(17);
+    h.insert(22);
+
+    h.display();
+
+    cout << "Search 17: " << (h.search(17) ? "Found" : "Not Found") << endl;
+    cout << "Search 40: " << (h.search(40) ? "Found" : "Not Found") << endl;
+
+    h.removeKey(15);
+    h.display();
+
+    return 0;
+}
