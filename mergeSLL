@@ -1,0 +1,79 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+    Node(int d): data(d), next(NULL) {}
+};
+
+void insertEnd(Node*& head, int val) {
+    Node* n = new Node(val);
+    if (!head) { head = n; return; }
+    Node* t = head;
+    while (t->next) t = t->next;
+    t->next = n;
+}
+
+Node* mergeLists(Node* a, Node* b) {
+    if (!a) return b;
+    if (!b) return a;
+
+    if (a->data <= b->data) {
+        a->next = mergeLists(a->next, b);
+        return a;
+    } else {
+        b->next = mergeLists(a, b->next);
+        return b;
+    }
+}
+
+void splitList(Node* head, Node*& a, Node*& b) {
+    Node* slow = head;
+    Node* fast = head->next;
+
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    a = head;
+    b = slow->next;
+    slow->next = NULL;
+}
+
+void mergeSort(Node*& head) {
+    if (!head || !head->next) return;
+
+    Node *a, *b;
+    splitList(head, a, b);
+
+    mergeSort(a);
+    mergeSort(b);
+
+    head = mergeLists(a, b);
+}
+
+void printList(Node* head) {
+    while (head) {
+        cout << head->data << " ";
+        head = head->next;
+    }
+    cout << endl;
+}
+
+int main() {
+    Node* head = NULL;
+    insertEnd(head, 7);
+    insertEnd(head, 3);
+    insertEnd(head, 8);
+    insertEnd(head, 1);
+
+    cout << "SLL Before: ";
+    printList(head);
+
+    mergeSort(head);
+
+    cout << "SLL After: ";
+    printList(head);
+}
