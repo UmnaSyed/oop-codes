@@ -1,0 +1,116 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+    Node* prev;
+    Node(int d): data(d), next(NULL), prev(NULL) {}
+};
+
+void insertEnd(Node*& head, int val) {
+    Node* n = new Node(val);
+
+    if (!head) {
+        head = n;
+        head->next = head;
+        head->prev = head;
+        return;
+    }
+
+    Node* tail = head->prev;
+    tail->next = n;
+    n->prev = tail;
+    n->next = head;
+    head->prev = n;
+}
+
+void breakCircle(Node*& head) {
+    Node* tail = head->prev;
+    tail->next = NULL;
+    head->prev = NULL;
+}
+
+void makeCircle(Node*& head) {
+    Node* t = head;
+    while (t->next) t = t->next;
+    head->prev = t;
+    t->next = head;
+}
+
+Node* mergeCDLL(Node* a, Node* b) {
+    if (!a) return b;
+    if (!b) return a;
+
+    if (a->data <= b->data) {
+        a->next = mergeCDLL(a->next, b);
+        if (a->next) a->next->prev = a;
+        a->prev = NULL;
+        return a;
+    } else {
+        b->next = mergeCDLL(a, b->next);
+        if (b->next) b->next->prev = b;
+        b->prev = NULL;
+        return b;
+    }
+}
+
+void splitCDLL(Node* head, Node*& a, Node*& b) {
+    Node* slow = head;
+    Node* fast = head->next;
+
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    a = head;
+    b = slow->next;
+
+    slow->next = NULL;
+    if (b) b->prev = NULL;
+}
+
+void mergeSortCDLL(Node*& head) {
+    breakCircle(head);
+
+    if (!head || !head->next) {
+        makeCircle(head);
+        return;
+    }
+
+    Node *a, *b;
+    splitCDLL(head, a, b);
+
+    mergeSortCDLL(a);
+    mergeSortCDLL(b);
+
+    head = mergeCDLL(a, b);
+
+    makeCircle(head);
+}
+
+void printCDLL(Node* head) {
+    Node* t = head;
+    do {
+        cout << t->data << " ";
+        t = t->next;
+    } while (t != head);
+    cout << endl;
+}
+
+int main() {
+    Node* head = NULL;
+    insertEnd(head, 9);
+    insertEnd(head, 3);
+    insertEnd(head, 6);
+    insertEnd(head, 1);
+
+    cout << "CDLL Before: ";
+    printCDLL(head);
+
+    mergeSortCDLL(head);
+
+    cout << "CDLL After: ";
+    printCDLL(head);
+}
