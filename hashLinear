@@ -1,0 +1,102 @@
+#include <iostream>
+using namespace std;
+
+class HashTable {
+private:
+    static const int SIZE = 10;   // table size
+    int table[SIZE];
+
+public:
+    HashTable() {
+        for (int i = 0; i < SIZE; i++)
+            table[i] = -1; // -1 means empty
+    }
+
+    int hashFunction(int key) {
+        return key % SIZE;
+    }
+
+    void insert(int key) {
+        int index = hashFunction(key);
+
+        // Linear probing
+        int start = index;
+        while (table[index] != -1) {
+            index = (index + 1) % SIZE;
+
+            // Table is full
+            if (index == start) {
+                cout << "Hash table overflow! Cannot insert.\n";
+                return;
+            }
+        }
+        table[index] = key;
+    }
+
+    bool search(int key) {
+        int index = hashFunction(key);
+        int start = index;
+
+        while (table[index] != -1) {
+            if (table[index] == key)
+                return true;
+            index = (index + 1) % SIZE;
+
+            if (index == start) // back to start → not found
+                break;
+        }
+        return false;
+    }
+
+    void removeKey(int key) {
+        int index = hashFunction(key);
+        int start = index;
+
+        while (table[index] != -1) {
+            if (table[index] == key) {
+                table[index] = -2; // mark as deleted
+                cout << "Key " << key << " deleted.\n";
+                return;
+            }
+            index = (index + 1) % SIZE;
+
+            if (index == start)
+                break;
+        }
+        cout << "Key not found!\n";
+    }
+
+    void display() {
+        cout << "\nHash Table:\n";
+        for (int i = 0; i < SIZE; i++) {
+            if (table[i] == -1)
+                cout << i << " : EMPTY\n";
+            else if (table[i] == -2)
+                cout << i << " : DELETED\n";
+            else
+                cout << i << " : " << table[i] << "\n";
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    HashTable h;
+
+    h.insert(5);
+    h.insert(15);
+    h.insert(25);
+    h.insert(35);
+    h.insert(7);
+    h.insert(17);
+
+    h.display();
+
+    cout << "Search 25: " << (h.search(25) ? "Found" : "Not Found") << endl;
+    cout << "Search 100: " << (h.search(100) ? "Found" : "Not Found") << endl;
+
+    h.removeKey(15);
+    h.display();
+
+    return 0;
+}
