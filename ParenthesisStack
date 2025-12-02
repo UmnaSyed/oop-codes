@@ -1,0 +1,130 @@
+#include <iostream>
+using namespace std;
+#define MAX 100
+
+class stack{
+    int top;  
+    
+    public:
+    char arr[MAX];
+
+    stack(){
+        top=-1;
+    }
+
+    bool isEmpty(){
+        return (top<0);
+    }
+
+    bool isFull(){
+        return top==MAX-1;
+    }
+
+    int size(){
+        return top+1;
+    }
+
+    bool push(char ch){
+        if (top >= (MAX-1)){
+            cout<<"\nStack Overflow!"<<endl;
+            return false;
+        }
+        else {
+            arr[++top]=ch;  
+            return true;
+        }
+    }
+
+    char pop(){
+        if (top < 0){
+            cout<<"\nStack is empty!";
+            return '\0';
+        }
+        else {
+            return arr[top--]; 
+        }
+    }
+
+    char peek(){
+        if (top < 0){
+            cout<<"\nStack is empty!";
+            return '\0';
+        }
+        else {
+            return arr[top];
+        }
+    }
+};
+
+
+bool isOpen(char c){
+    return (c=='(' || c == '{' || c == '[');
+}
+
+bool isClose(char c){
+    return  (c == ')' || c == '}' || c == ']');
+}
+
+bool isMatching(char o, char c){
+    return (o == '(' && c ==')') || (o == '{' && c =='}') || (o == '[' && c ==']');
+}
+
+bool isInPattern(char c, const string& pattern){
+    for (int i=0; i< pattern.length(); i++){
+        if (pattern[i]==c){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool validateBrac(const string& text, const string& pattern){
+    stack s;
+
+    for (int i =0; i<text.length(); i++){
+        char current = text[i];
+
+        if (isOpen(current)){
+            if (isInPattern(current, pattern)){
+                s.push(current);
+            }
+        }
+        else if (isClose(current)){
+            if (isInPattern(current, pattern)){
+                if (s.isEmpty()){
+                    cout<<"\nMatching Opening bracket missing!"<<endl;
+                    return false;
+                }
+                char o = s.pop();
+                if (!isMatching(o, current)){
+                    cout<<"\nINVALID: Mismatched Brackets!"<<endl;
+                    return false;
+                }
+            }
+        }
+    }
+    if (!s.isEmpty()){
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+int main(){
+    string text, pattern;
+
+    cout<<"\nEnter text: ";
+    getline(cin, text);
+
+    cout<<"Enter pattern: ";
+    getline(cin, pattern);
+
+    if (validateBrac(text, pattern)){
+        cout<<"\nResult: VALID"<<endl;
+    }
+    else {
+        cout<<"\nResult: INVALID"<<endl;
+    }
+    return 0;
+}
