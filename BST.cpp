@@ -1,0 +1,203 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+
+    Node() {
+        left = right = nullptr;
+    }
+
+    Node(int val) {
+        data = val;
+        left = right = nullptr;
+    }
+};
+
+class BST {
+private:
+    Node* root;
+
+    Node* insert(Node* root, int val) {
+        if (root == nullptr) {
+            return new Node(val);
+        }
+        else if (val < root->data) {
+            root->left = insert(root->left, val);
+        }
+        else if (val > root->data) {
+            root->right = insert(root->right, val);
+        }
+        return root;
+    }
+
+    void inOrder(Node* node) {
+        if (node == nullptr)
+            return;
+        inOrder(node->left);
+        cout << node->data << " ";
+        inOrder(node->right);
+    }
+
+    void preOrder(Node* node) {
+        if (node == nullptr)
+            return;
+        cout << node->data << " ";
+        preOrder(node->left);
+        preOrder(node->right);
+    }
+
+    void postOrder(Node* node) {
+        if (node == nullptr)
+            return;
+        postOrder(node->left);
+        postOrder(node->right);
+        cout << node->data << " ";
+    }
+
+    bool search(Node* root, int key) {
+        if (root == nullptr)
+            return false;
+        else if (root->data == key)
+            return true;
+        else if (key < root->data)
+            return search(root->left, key);
+        else
+            return search(root->right, key);
+    }
+
+    int findMin(Node* root) {
+        while (root->left != nullptr)
+            root = root->left;
+        return root->data;
+    }
+
+    int findMax(Node* root) {
+        while (root->right != nullptr)
+            root = root->right;
+        return root->data;
+    }
+
+    Node* deleteNode(Node* root, int val) {
+        if (root == nullptr)
+            return root;
+
+        if (val < root->data)
+            root->left = deleteNode(root->left, val);
+        else if (val > root->data)
+            root->right = deleteNode(root->right, val);
+        else {
+            // Node found
+            if (!root->left && !root->right)
+                return nullptr;
+            else if (!root->left)
+                return root->right;
+            else if (!root->right)
+                return root->left;
+            else {
+                root->data = findMin(root->right);
+                root->right = deleteNode(root->right, root->data);
+            }
+        }
+        return root;
+    }
+
+    int height(Node* root) {
+        if (root == nullptr)
+            return 0;
+        else
+            return 1 + max(height(root->left), height(root->right));
+    }
+
+    int countNodes(Node* root) {
+        if (root == nullptr)
+            return 0;
+        else
+            return 1 + countNodes(root->left) + countNodes(root->right);
+    }
+
+public:
+    BST() {
+        root = nullptr;
+    }
+
+    void insertNode(int val) {
+        root = insert(root, val);
+    }
+
+    void inTraversal() {
+        cout << "Inorder Traversal: ";
+        inOrder(root);
+        cout << endl;
+    }
+
+    void preTraversal() {
+        cout << "Preorder Traversal: ";
+        preOrder(root);
+        cout << endl;
+    }
+
+    void postTraversal() {
+        cout << "Postorder Traversal: ";
+        postOrder(root);
+        cout << endl;
+    }
+
+    bool searchNode(int key) {
+        return search(root, key);
+    }
+
+    void deleteVal(int val) {
+        root = deleteNode(root, val);
+    }
+
+    int getHeight() {
+        return height(root);
+    }
+
+    int getMax() {
+        return findMax(root);
+    }
+
+    int getCount() {
+        return countNodes(root);
+    }
+
+    int getMin() {
+        return findMin(root);
+    }
+};
+
+int main() {
+    BST tree;
+
+    tree.insertNode(30);
+    tree.insertNode(20);
+    tree.insertNode(40);
+    tree.insertNode(50);
+    tree.insertNode(70);
+    tree.insertNode(60);
+    tree.insertNode(80);
+
+    tree.inTraversal();
+    tree.preTraversal();
+    tree.postTraversal();
+
+
+    cout << "Min value: " << tree.getMin() << endl;
+    cout << "Max value: " << tree.getMax() << endl;
+    cout << "Height: " << tree.getHeight() << endl;
+    cout << "Node Count: " << tree.getCount() << endl;
+
+    cout << "Search 6: " << (tree.searchNode(6) ? "Found" : "Not Found") << endl;
+    cout << "Search 20: " << (tree.searchNode(20) ? "Found" : "Not Found") << endl;
+
+    tree.deleteVal(80);
+    cout << "80 deleted!" << endl;
+    tree.inTraversal();
+
+    return 0;
+}

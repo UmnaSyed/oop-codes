@@ -1,0 +1,82 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+struct Node{
+    int data;
+    Node* left;
+    Node* right;
+
+    Node(){
+        right=left=nullptr;
+    }
+
+    Node(int val){
+        data=val;
+        right=left=nullptr;
+    }
+};
+
+class BST{
+    private:
+    Node* root;
+    int count;
+
+    bool isBST(Node* root, int &minVal, int &maxVal){
+        if (root==nullptr){
+            minVal=9999999;
+            maxVal=-9999999;
+            return true;
+        }
+        if (root->left==nullptr && root->right==nullptr){
+            minVal=root->data;
+            maxVal=root->data;
+            count++;
+            return true;
+        }
+
+        int leftMin, leftMax, rightMin, rightMax;
+
+        bool leftBST = isBST(root->left, leftMin, leftMax);
+        bool rightBst = isBST(root->right, rightMin, rightMax);
+
+        minVal=min(root->data, leftMin);
+        maxVal=max(root->data, rightMax);
+
+        bool currentBST = (leftBST && rightBst && root->data >  leftMax && root->data < rightMin); 
+        if (currentBST) {
+            count++;
+        }
+        return currentBST;
+    }
+
+    public:
+    BST(){
+        root=nullptr;
+        count=0;
+    }
+
+    void countBST(){
+        int minVal, maxVal;
+
+        isBST(root, minVal, maxVal);
+        cout<<"Total number of valid BSTS: "<<count<<endl;
+    }
+
+    void createSampleTree() {
+        root = new Node(50);
+        root->left = new Node(25);
+        root->right = new Node(7);
+        root->left->left = new Node(2);
+        root->left->right = new Node(38);
+    }
+};
+
+int main(){
+    BST tree;
+
+    tree.createSampleTree();
+    tree.countBST();
+
+    return 0;
+}
