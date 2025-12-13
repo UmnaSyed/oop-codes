@@ -1,0 +1,91 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+class Node{
+    public:
+    string word;
+    Node* next;
+
+    Node(string w){
+        word = w;
+        next = NULL;
+    }
+};
+
+class hashTable{
+    private:
+    static const int SIZE = 100;
+    Node* dictTable[SIZE];
+
+    public:
+    hashTable(){
+        for (int i =0; i < SIZE; i++){
+            dictTable[i]=NULL;
+        }
+    }
+
+    int hashFunc(string word){
+        int sum=0;
+        for (int i=0; i<word.length(); i++){
+            sum=sum+word[i];
+        }
+        return sum % 100;
+    }
+
+    void addRecord(string word){
+        int index = hashFunc(word);
+        Node* newNode = new Node(word);
+
+        if (dictTable[index]==NULL){
+            dictTable[index]=newNode;
+        }
+        else {
+            newNode->next = dictTable[index];
+            dictTable[index] = newNode;
+        }
+        cout <<"\n"<< word << " added to the dictionary!";
+    }
+
+    void wordSearch(string word){
+        int index = hashFunc(word);
+        Node* temp = dictTable[index];
+
+        while (temp!=NULL){
+            if (temp->word == word){
+                cout<<"\n"<<word<<" found in the dictionary!";
+                return;
+            }
+            temp = temp->next;
+        }
+        cout<<"\n"<<word<<" not found in the dictionary!"<<endl;
+    }
+
+    void printDict(){
+        for (int i =0; i < SIZE; i++){
+            if (dictTable[i]!=NULL){
+                cout<<"\n"<<i+1<<" - ";
+                Node* temp = dictTable[i];
+                while (temp!=NULL){
+                    cout<<temp->word<<" - ";
+                    temp = temp->next;
+                }
+                cout<<"NULL\n";
+            }
+        }
+    }
+};
+
+int main(){
+    hashTable dict;
+
+    dict.addRecord("FAST");
+    dict.addRecord("FATS");
+    dict.addRecord("ATE");
+    dict.addRecord("EAT");
+    dict.wordSearch("ATE");
+    dict.wordSearch("eat");
+    dict.printDict();
+
+    return 0;
+}
