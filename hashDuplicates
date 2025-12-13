@@ -1,0 +1,109 @@
+#include <iostream>
+using namespace std;
+
+class entry {
+public:
+    int key;
+    int data;
+    int flag; // 0 = EMPTY, 1 = OCCUPIED, 2 = DELETED
+
+    entry() {
+        flag = 0;
+    }
+};
+
+class hashTable {
+private:
+    static const int SIZE = 10;
+    entry table[SIZE];
+
+public:
+    int hashFunc(int key) {
+        return key % SIZE;
+    }
+
+    void insert(int key) {
+        int index = hashFunc(key);
+        int start = index;
+
+        while (table[index].flag == 1) {
+            index = (index + 1) % SIZE;
+            if (index == start) {
+                cout << "Table Full!\n";
+                return;
+            }
+        }
+
+        table[index].key = key;
+        table[index].data = index;
+        table[index].flag = 1;
+    }
+
+    void returnValues(int key) {
+        int index = hashFunc(key);
+        int start = index;
+        bool found = false;
+
+        while (table[index].flag != 0) {
+            if (table[index].flag == 1 && table[index].key == key) {
+                cout << "Key " << key << " found at index " << index << endl;
+                found = true;
+            }
+            index = (index + 1) % SIZE;
+            if (index == start)
+                break;
+        }
+        if (!found){
+            cout<<"\n"<<key<<" not found!\n";
+        }
+    }
+
+    void removeKeys(int key) {
+        int index = hashFunc(key);
+        int start = index;
+        bool found = false;
+
+        while (table[index].flag != 0) {
+            if (table[index].flag == 1 && table[index].key == key) {
+                table[index].flag = 2; // MARK AS DELETED
+                found = true;
+            }
+            index = (index + 1) % SIZE;
+            if (index == start)
+                break;
+        }
+
+        if (!found)
+            cout << "Key not found\n";
+    }
+
+    void display() {
+        cout << "\nHash Table:\n";
+        for (int i = 0; i < SIZE; i++) {
+            cout << i << " : ";
+            if (table[i].flag == 0)
+                cout << "EMPTY";
+            else if (table[i].flag == 2)
+                cout << "DELETED";
+            else
+                cout << table[i].key;
+            cout << endl;
+        }
+    }
+};
+
+int main() {
+    hashTable h;
+
+    h.insert(89);
+    h.insert(54);
+    h.insert(89);
+    h.insert(22);
+    h.insert(54);
+
+    h.display();
+    h.returnValues(54);
+    h.removeKeys(54);
+    h.display();
+    
+}
