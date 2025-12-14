@@ -1,0 +1,53 @@
+#include <iostream>
+using namespace std;
+
+// Heapify function for min-heap
+void minHeapify(int arr[], int n, int i) {
+    int smallest = i;
+    int left = 2 * i + 1;   // left child
+    int right = 2 * i + 2;  // right child
+
+    if (left < n && arr[left] < arr[smallest])
+        smallest = left;
+
+    if (right < n && arr[right] < arr[smallest])
+        smallest = right;
+
+    if (smallest != i) {
+        swap(arr[i], arr[smallest]);
+        minHeapify(arr, n, smallest);
+    }
+}
+
+// Function to sort subarray A[st..ed] using min-heap
+void heapSortSubarray(int A[], int st, int ed) {
+    int n = ed - st + 1;
+
+    // Step 1: Build min-heap from subarray
+    for (int i = n / 2 - 1; i >= 0; i--)
+        minHeapify(A + st, n, i);
+
+    // Step 2: Extract min one by one and place in array
+    for (int i = n - 1; i >= 0; i--) {
+        swap(A[st], A[st + i]);     // Move min to end of subarray
+        minHeapify(A + st, i, 0);   // Heapify reduced heap
+    }
+}
+
+int main() {
+    int A[] = {9, 5, 2, 7, 1, 8, 3};
+    int N = sizeof(A)/sizeof(A[0]);
+    int st = 1, ed = 5; // subarray: 5,2,7,1,8
+
+    cout << "Original array: ";
+    for(int i=0; i<N; i++) cout << A[i] << " ";
+    cout << endl;
+
+    heapSortSubarray(A, st, ed);
+
+    cout << "After sorting subarray A[" << st << ".." << ed << "]: ";
+    for(int i=0; i<N; i++) cout << A[i] << " ";
+    cout << endl;
+
+    return 0;
+}
