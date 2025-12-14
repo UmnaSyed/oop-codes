@@ -1,0 +1,214 @@
+#include <iostream>
+using namespace std;
+
+#define MAX 100
+
+class maxHeap {
+private:
+    int array[MAX];
+    int size;
+
+    int parent(int i) { 
+        return (i - 1) / 2; 
+    }
+    int left(int i) { 
+        return 2 * i + 1; 
+    }
+    int right(int i) { 
+        return 2 * i + 2; 
+    }
+
+public:
+    maxHeap() { 
+        size = 0; 
+    }
+
+    void insertKey(int val) {
+        if (size == MAX) {
+            cout << "Heap is full!!" << endl;
+            return;
+        }
+        array[size] = val;
+        size++;
+
+        int i = size - 1;
+        while (i != 0 && array[parent(i)] < array[i]) {
+            swap(array[i], array[parent(i)]);
+            i = parent(i);
+        }
+    }
+
+    void maxHeapify(int i) {
+        int largest = i;
+        int l = left(i);
+        int r = right(i);
+
+        if (l < size && array[l] > array[largest])
+            largest = l;
+        if (r < size && array[r] > array[largest])
+            largest = r;
+
+        if (largest != i) {
+            swap(array[i], array[largest]);
+            maxHeapify(largest);
+        }
+    }
+
+    int getMax() {
+        if (size > 0) return array[0];
+        cout << "Heap is empty!" << endl;
+        return -1;
+    }
+
+    void deleteVal(int val) {
+        int i;
+        for (i = 0; i < size; i++) {
+            if (array[i] == val) break;
+        }
+        if (i == size) return;
+
+        array[i] = array[size - 1];
+        size--;
+        maxHeapify(i);
+    }
+
+    void displayHeap() {
+        for (int i = 0; i < size; i++)
+            cout << array[i] << " ";
+        cout << endl;
+    }
+
+    void heapSort() {
+        for (int i = size / 2 - 1; i >= 0; i--)
+            maxHeapify(i);
+
+        int originalSize = size;
+
+        for (int i = size - 1; i >= 0; i--) {
+            swap(array[0], array[i]);
+            size--;                   
+            maxHeapify(0);          
+        }
+
+        size = originalSize;
+
+        cout << "\nHeap Sorted (Ascending): ";
+        for (int i = 0; i < size; i++)
+            cout << array[i] << " ";
+        cout << endl;
+    }
+};
+
+class minHeap {
+private:
+    int array[MAX];
+    int size;
+
+    int parent(int i) { return (i - 1) / 2; }
+    int left(int i) { return 2 * i + 1; }
+    int right(int i) { return 2 * i + 2; }
+
+public:
+    minHeap() { size = 0; }
+
+    void insertKey(int val) {
+        if (size == MAX) {
+            cout << "Heap Overflow!!" << endl;
+            return;
+        }
+        array[size] = val;
+        size++;
+
+        int i = size - 1;
+        while (i != 0 && array[parent(i)] > array[i]) {
+            swap(array[i], array[parent(i)]);
+            i = parent(i);
+        }
+    }
+
+    void minHeapify(int i) {
+        int smallest = i;
+        int l = left(i);
+        int r = right(i);
+
+        if (l < size && array[l] < array[smallest])
+            smallest = l;
+        if (r < size && array[r] < array[smallest])
+            smallest = r;
+
+        if (smallest != i) {
+            swap(array[i], array[smallest]);
+            minHeapify(smallest);
+        }
+    }
+
+    void deleteVal(int val) {
+        int i;
+        for (i = 0; i < size; i++) {
+            if (array[i] == val) break;
+        }
+        if (i == size) return;
+
+        array[i] = array[size - 1];
+        size--;
+        minHeapify(i);
+    }
+
+    void displayHeap() {
+        for (int i = 0; i < size; i++)
+            cout << array[i] << " ";
+        cout << endl;
+    }
+
+    void heapSort() {
+        for (int i = size / 2 - 1; i >= 0; i--)
+            minHeapify(i);
+
+        int originalSize = size;
+
+        for (int i = size - 1; i >= 0; i--) {
+            swap(array[0], array[i]); 
+            size--;
+            minHeapify(0);
+        }
+        size = originalSize;
+
+        cout << "\nHeap Sorted (Descending): ";
+        for (int i = 0; i < size; i++)
+            cout << array[i] << " ";
+        cout << endl;
+    }
+};
+
+int main() {
+    int ar1[] = {25, 30, 35, 11, 15, 19, 18, 55, 78, 36};
+    int n = sizeof(ar1) / sizeof(ar1[0]);
+
+    maxHeap h1;
+    minHeap h2;
+
+    cout << "\nInserting into Max Heap:" << endl;
+    for (int i = 0; i < n; i++) {
+        h1.insertKey(ar1[i]);
+        h1.displayHeap();
+    }
+
+    cout << "\nInserting into Min Heap:" << endl;
+    for (int i = 0; i < n; i++) {
+        h2.insertKey(ar1[i]);
+        h2.displayHeap();
+    }
+
+    h1.deleteVal(55);
+    cout << "\nAfter deleting 55 from Max Heap: " << endl;
+    h1.displayHeap();
+
+    h2.deleteVal(18);
+    cout << "\nAfter deleting 18 from Min Heap: " << endl;
+    h2.displayHeap();
+
+    h1.heapSort();
+    h2.heapSort();
+
+    return 0;
+}
